@@ -1,0 +1,181 @@
+<%- include('../partials/header', {title: 'Exciting tours for adventurous people'}) %>
+
+<section class="section-header">
+    <div class="header__hero">
+        <div class="header__hero-overlay">&nbsp;</div>
+        <img class="header__hero-img" src="/img/tours/<%= doc.imageCover%>" alt="<%= doc.name%>">
+    </div>
+    <div class="heading-box">
+        <h1 class="heading-primary">
+            <span><%= doc.name%></span>
+        </h1>
+        <div class="heading-box__group">
+            <div class="heading-box__detail">
+                <svg class="heading-box__icon">
+                    <use xlink:href="/img/icons.svg#icon-clock"></use>
+                </svg>
+                <span class="heading-box__text"><%= doc.duration%> days</span>
+            </div>
+            <div class="heading-box__detail">
+                <svg class="heading-box__icon">
+                    <use xlink:href="/img/icons.svg#icon-map-pin">
+                    </use>
+                </svg>
+                <span class="heading-box__text"><%= doc.startLocation.description%></span>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="section-description">
+    <div class="overview-box">
+        <div>
+            <div class="overview-box__group">
+                <h2 class="heading-secondary ma-bt-lg">Quick facts</h2>
+                <div class="overview-box__detail">
+                    <svg class="overview-box__icon">
+                        <use xlink:href="/img/icons.svg#icon-calendar"></use>
+                    </svg>
+                    <span class="overview-box__label">Next date</span>
+                    <span class="overview-box__text"><%= doc.startDates[0].toLocaleString('default', { month: 'long' })%> <%= doc.startDates[0].getFullYear()%></span>
+                </div>
+                <div class="overview-box__detail">
+                    <svg class="overview-box__icon">
+                        <use xlink:href="/img/icons.svg#icon-trending-up"></use>
+                    </svg><span class="overview-box__label">Difficulty</span>
+                    <span class="overview-box__text"><%= doc.difficulty%></span>
+                </div>
+                <div class="overview-box__detail">
+                    <svg class="overview-box__icon">
+                        <use xlink:href="/img/icons.svg#icon-user"></use>
+                    </svg>
+                    <span class="overview-box__label">Participants</span>
+                    <span class="overview-box__text"><%= doc.maxGroupSize%> people</span>
+                </div>
+                <div class="overview-box__detail">
+                    <svg class="overview-box__icon">
+                        <use xlink:href="/img/icons.svg#icon-star"></use>
+                    </svg>
+                    <span class="overview-box__label">Rating</span>
+                    <span class="overview-box__text"><%= doc.ratingsAverage%> / 5</span>
+                </div>
+            </div>
+            <div class="overview-box__group">
+                <h2 class="heading-secondary ma-bt-lg">Your tour guides</h2>
+                <% doc.guides.forEach((guide)=> { %>
+                    <div class="overview-box__detail">
+                        <% if(guide.role === 'lead-guide') { %>
+                            <img class="overview-box__img" src="/img/users/<%= guide.photo%>" alt="<%= guide.name%>">
+                            <span class="overview-box__label">Lead guide</span>
+                            <span class="overview-box__text"><%= guide.name%></span>
+                        <% } else if(guide.role === 'guide') { %>
+                            <img class="overview-box__img" src="/img/users/<%= guide.photo%>" alt="<%= guide.name%>">
+                            <span class="overview-box__label">Tour guide</span>
+                            <span class="overview-box__text"><%= guide.name%></span>
+                        <% } %>
+                    </div>
+                <% }) %>
+            </div>
+        </div>
+    </div>
+    <div class="description-box">
+        <h2 class="heading-secondary ma-bt-lg">About <%= doc.name%> tour</h2>
+        <p class="description__text"><%- doc.description%></p>
+    </div>
+</section>
+
+<section class="section-pictures">
+    <% doc.images.forEach((image, i)=> { %>
+        <div class="picture-box">
+            <img class="picture-box__img picture-box__img--<%= i+1%>" src="/img/tours/<%= image%>" alt="<%= doc.name%> Tour <%= i+1%>">
+        </div>
+    <% })%>
+</section>
+
+<section class="section-map">
+    <div id="map" data-locations="<%= JSON.stringify(doc.locations)%>"></div>
+</section>
+
+<section class="section-reviews">
+    <div id="multi-item-example" class="carousel slide carousel-multi-item reviews" data-ride="carousel">
+        <ol class="carousel-indicators">
+            <li data-target="#multi-item-example" data-slide-to="0" class="active" ></li>
+            <% for(var i=1; i< Math.ceil(doc.reviews.length/3); i++) { %>
+                <li data-target="#multi-item-example" data-slide-to="<%= i%>"></li>
+            <% } %>
+        </ol>
+
+        <div class="carousel-inner" role="listbox" style="margin-right: 4rem; margin-left: 8rem;">
+            <div class="carousel-item active">
+                <% for(var i=0; i< Math.min(3, doc.reviews.length); i++) { %>
+                    <div class="col-md-3 reviews__card" style="float:left; height:320px;">
+                        <div class="reviews__avatar">
+                            <img class="reviews__avatar-img" src="/img/users/<%= doc.reviews[i].user.photo%>" alt="<%= doc.reviews[i].user.name%>">
+                            <h6 class="reviews__user"><%= doc.reviews[i].user.name%></h6>
+                        </div>
+                        <p class="reviews__text"><%= doc.reviews[i].review%></p>
+                        <div class="reviews__rating">
+                            <% for(var j=1; j<=doc.reviews[i].rating; j++) { %>
+                                <svg class="reviews__star reviews__star--active">
+                                    <use xlink:href="/img/icons.svg#icon-star"></use>
+                                </svg>
+                            <% } %>
+                            <% for(var j=0; j< 5-doc.reviews[i].rating; j++) { %>
+                                <svg class="reviews__star reviews__star--inactive">
+                                    <use xlink:href="/img/icons.svg#icon-star"></use>
+                                </svg>
+                            <% } %>
+                        </div>
+                    </div>
+                <% } %>
+            </div>
+
+            <% for(var i=1; i< Math.ceil(doc.reviews.length/3); i++) { %>
+                <div class="carousel-item">
+                    <% for(var j=3*i; j< (3*i)+Math.min((3*i),doc.reviews.length-(3*i)); j++) { %>
+                        <div class="col-md-3 reviews__card" style="float:left; height:320px;">
+                            <div class="reviews__avatar">
+                                <img class="reviews__avatar-img" src="/img/users/<%= doc.reviews[j].user.photo%>" alt="<%= doc.reviews[j].user.name%>">
+                                <h6 class="reviews__user"><%= doc.reviews[j].user.name%></h6>
+                            </div>
+                            <p class="reviews__text"><%= doc.reviews[j].review%></p>
+                            <div class="reviews__rating">
+                                <% for(var k=1; k<=doc.reviews[j].rating; k++) { %>
+                                    <svg class="reviews__star reviews__star--active">
+                                        <use xlink:href="/img/icons.svg#icon-star"></use>
+                                    </svg>
+                                <% } %>
+                                <% for(var k=0; k< 5-doc.reviews[j].rating; k++) { %>
+                                    <svg class="reviews__star reviews__star--inactive">
+                                        <use xlink:href="/img/icons.svg#icon-star"> </use>
+                                    </svg>
+                                <% } %>
+                            </div>
+                        </div>
+                    <% } %>
+                </div>
+            <% } %>
+        </div> 
+    </div>
+</section>
+
+<section class="section-cta">
+    <div class="cta">
+        <div class="cta__img cta__img--logo">
+            <img src="/img/logo-white.png" alt="Natours logo">
+        </div>
+        <img class="cta__img cta__img--1" src="/img/tours/<%= doc.images[1]%>" alt="Tour picture">
+        <img class="cta__img cta__img--2" src="/img/tours/<%= doc.images[2]%>" alt="Tour picture">
+        <div class="cta__content">
+            <h2 class="heading-secondary">What are you waiting for?</h2>
+            <p class="cta__text"><%= doc.duration%> days. 1 adventure. Infinite memories. Make it yours today!</p>
+            <% if(currentUser) { %>
+                <button class="btn btn--green span-all-rows" id="book-tour" data-tour-id="<%=doc._id%>">Book tour now!</button>
+            <% } else { %> 
+                <button class="btn btn--green span-all-rows" id="book-tour" data-tour-id="<%=doc._id%>">Login to Book now!</button>
+            <% } %>
+        </div>
+    </div>
+</section>
+
+<%- include('../partials/footer') %>
